@@ -25,7 +25,7 @@ let parseInt str =
     if isSuccessful then Some(number) else None
 
 let (>>=) a f = Option.bind f a
-let (>>) a f = Option.map f a
+let (>->) a f = Option.map f a
 
 let a = parseInt "3"
 let b = parseInt "6"
@@ -40,7 +40,7 @@ let meh =
 "998343" 
     |> parseInt
     >>= addOne
-    >>= fun value -> value |> addOne >> fun i -> i + 1
+    >-> (+) 1
     |> fun opt ->
         match opt with
         | Some value -> value |> string
