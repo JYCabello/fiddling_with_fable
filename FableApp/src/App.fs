@@ -24,17 +24,21 @@ let (>>=) a f = Option.bind f a
 let (>->) a f = Option.map f a
 
 let a = parseInt "3"
-let b = parseInt "6d"
+let b = parseInt "6"
 let c = parseInt "4"
 
 let log str = console.log(str)
 
-let meh = 
+let orInvalidMessage a = 
+    Option.fold (fun _ value -> value |> string) "It was not a valid number" a
+
+let meh = (
     a           >>= fun av ->
     b           >>= fun bv ->
     c >-> (+) 1 >>= fun cv -> 
     addOne cv   >>= fun d ->
-    Some(av + bv + cv + d)
+    Some(av + bv + cv + d)) |> orInvalidMessage
+
 
 let orZero a =
     Option.fold (+) 0 a
@@ -48,9 +52,6 @@ console.log(meh)
     |> parseInt
     >>= addOne
     >-> (+) 1
-    |> fun opt ->
-        match opt with
-        | Some value -> value |> string
-        | None -> "It was not a valid number"
+    |> orInvalidMessage
     |> log
     |> ignore
