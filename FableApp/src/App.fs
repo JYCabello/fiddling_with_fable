@@ -30,12 +30,17 @@ let c = parseInt "4"
 let log str = console.log(str)
 
 let meh = 
-    a                   >>= fun av ->
-    b                   >>= fun bv ->
-    c                   >>= fun cv -> 
-    cv |> addOne        >>= fun d ->
-    Some(d) >-> (+) 1   >>= fun e ->
+    a           >>= fun av ->
+    b           >>= fun bv ->
+    c >-> (+) 1 >>= fun cv -> 
+    addOne cv   >>= fun d ->
     Some(av + bv + cv + d)
+
+let orZero a =
+    Option.fold (+) 0 a
+
+let mah =
+    a |> orZero
 
 console.log(meh)
 
