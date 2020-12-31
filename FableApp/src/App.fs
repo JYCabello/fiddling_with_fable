@@ -6,10 +6,10 @@ let myButton = document.querySelector(".my-button") :?> Browser.Types.HTMLButton
 
 let countAttrName = "data-count"
 
-myButton.setAttribute(countAttrName, string 0)
+myButton.setAttribute(countAttrName, 0 |> string)
 
 let setCount cnt =
-        myButton.setAttribute(countAttrName, string cnt)
+        myButton.setAttribute(countAttrName, cnt |> string)
         myButton.innerText <- sprintf "You clicked: %i time(s)" cnt
     
 myButton.onclick <- fun _ -> myButton.getAttribute countAttrName |> int |> (+) 1 |> setCount
@@ -17,7 +17,8 @@ myButton.onclick <- fun _ -> myButton.getAttribute countAttrName |> int |> (+) 1
 let addOne x = Some(x + 1)
 
 let parseInt str =
-    let isSuccessful, number = System.Int32.TryParse str
+    System.Int32.TryParse str
+    |> fun (isSuccessful, number) ->
     if isSuccessful then Some(number) else None
 
 let (>>=) a f = Option.bind f a
@@ -32,26 +33,21 @@ let log str = console.log(str)
 let orInvalidMessage a = 
     Option.fold (fun _ value -> value |> string) "It was not a valid number" a
 
-let meh = (
-    a           >>= fun av ->
-    b           >>= fun bv ->
-    c >-> (+) 1 >>= fun cv -> 
-    addOne cv   >>= fun d ->
-    Some(av + bv + cv + d)) |> orInvalidMessage
+a               >>= (fun av ->
+b               >>= fun bv  ->
+c >-> (+) 1     >>= fun cv  ->
+cv |> addOne    >>= fun d   ->
+Some(av + bv + cv + d))
+|> orInvalidMessage 
+|> log
 
+let orZero a = Option.fold (+) 0 a
 
-let orZero a =
-    Option.fold (+) 0 a
-
-let mah =
-    a |> orZero
-
-console.log(meh)
+let mah = a |> orZero
 
 "998343"
-    |> parseInt
-    >>= addOne
-    >-> (+) 1
-    |> orInvalidMessage
-    |> log
-    |> ignore
+|> parseInt
+>>= addOne
+>-> (+) 1
+|> orInvalidMessage
+|> log
